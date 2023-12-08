@@ -15,8 +15,11 @@ namespace WeatherApiProject.Controllers
     {
         private static List<Planet> planets = new List<Planet>
         {
-            new Planet { Id = 1, Name = "Earth", Satellites = new List<Satellite> { new Satellite { Id = 1, Name = "Moon", Weather = "Clear" } } },
-            new Planet { Id = 2, Name = "Mars", Satellites = new List<Satellite> { new Satellite { Id = 2, Name = "Phobos", Weather = "Cloudy" } } }
+            new Planet { Id = 1, Name = "Earth",CreatedDate = DateTime.Now.AddDays(-5), Satellites = new List<Satellite> { new Satellite { Id = 1, Name = "Moon", Weather = "Clear" } } },
+            new Planet { Id = 2, Name = "Mars",CreatedDate = DateTime.Now.AddDays(-4), Satellites = new List<Satellite> { new Satellite { Id = 1, Name = "Phobos", Weather = "Cloudy" },  new Satellite { Id = 2, Name = "Deimos", Weather = "Cloudy" } } },
+            new Planet { Id = 3, Name = "Jupiter",CreatedDate = DateTime.Now.AddDays(-3), Satellites = new List<Satellite> { new Satellite { Id = 1, Name = "Europa", Weather = "Windy" } } },
+            new Planet { Id = 4, Name = "Saturn",CreatedDate = DateTime.Now.AddDays(-2), Satellites = new List<Satellite> { new Satellite { Id = 1, Name = "Titan", Weather = "Cloudy" } } },
+            new Planet { Id = 5, Name = "Neptune",CreatedDate = DateTime.Now.AddDays(-1), Satellites = new List<Satellite> { new Satellite { Id = 1, Name = "Triton", Weather = "Clear" } } }
         };
 
         // GET api/v1/planets
@@ -48,7 +51,7 @@ namespace WeatherApiProject.Controllers
                         query = sortOrder.ToLower() == "asc" ? query.OrderBy(p => p.Id) : query.OrderByDescending(p => p.Id);
                         break;
                     case "created_date":
-                        query = sortOrder.ToLower() == "asc" ? query.OrderBy(p => p.Id) : query.OrderByDescending(p => p.Id);
+                        query = sortOrder.ToLower() == "asc" ? query.OrderBy(p => p.CreatedDate) : query.OrderByDescending(p => p.CreatedDate);
                         break;
                         // Diðer sýralama seçenekleri eklenebilir.
                 }
@@ -62,6 +65,7 @@ namespace WeatherApiProject.Controllers
             {
                 Id = p.Id,
                 Name = p.Name,
+                CreatedDate = p.CreatedDate,
                 Satellites = p.Satellites.Select(s => new SatelliteDto
                 {
                     Id = s.Id,
