@@ -1,75 +1,22 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Linq;
+using System.Numerics;
+using WeatherApiProject.Dtos;
+using WeatherApiProject.Entities;
 
-namespace SpaceWeatherAPI
+namespace WeatherApiProject.Controllers
 {
-    public class Planet
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public List<Satellite> Satellites { get; set; }
-    }
-
-    public class Satellite
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Weather { get; set; }
-    }
-
-    public class SpaceWeatherDto
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public List<SatelliteDto> Satellites { get; set; }
-    }
-
-    public class SatelliteDto
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Weather { get; set; }
-    }
-
-    public class Startup
-    {
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddControllers();
-        }
-
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseRouting();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-        }
-    }
-
-    public class SpaceWeatherController : ControllerBase
+    [ApiController]
+    [Route("[controller]")]
+    /*
+     * API V1
+     * 
+     */
+    public class WeatherForecastController : ControllerBase
     {
         private static List<Planet> planets = new List<Planet>
         {
             new Planet { Id = 1, Name = "Earth", Satellites = new List<Satellite> { new Satellite { Id = 1, Name = "Moon", Weather = "Clear" } } },
-            new Planet { Id = 2, Name = "Mars", Satellites = new List<Satellite> { new Satellite { Id = 2, Name = "Phobos", Weather = "Cloudy" } } },
-            new Planet { Id = 3, Name = "Jupiter", Satellites = new List<Satellite> { new Satellite { Id = 3, Name = "Europa", Weather = "Cloudy" } } },
-            new Planet { Id = 4, Name = "Saturn", Satellites = new List<Satellite> { new Satellite { Id = 4, Name = "Titan", Weather = "Acid Rain" } } },
-            new Planet { Id = 5, Name = "Neptune", Satellites = new List<Satellite> { new Satellite { Id = 5, Name = "Triton", Weather = "Icy" } } }
+            new Planet { Id = 2, Name = "Mars", Satellites = new List<Satellite> { new Satellite { Id = 2, Name = "Phobos", Weather = "Cloudy" } } }
         };
 
         // GET api/v1/planets
@@ -81,7 +28,8 @@ namespace SpaceWeatherAPI
             // Filtreleme
             if (!string.IsNullOrEmpty(status))
             {
-                query = query.Where(p => p.Name.ToLower().Contains(status.ToLower()));
+                var active = status.Equals("active");
+                query = query.Where(p => p.IsActive == active);
             }
 
             // Sýralama
@@ -95,6 +43,12 @@ namespace SpaceWeatherAPI
                 {
                     case "name":
                         query = sortOrder.ToLower() == "asc" ? query.OrderBy(p => p.Name) : query.OrderByDescending(p => p.Name);
+                        break;
+                    case "id":
+                        query = sortOrder.ToLower() == "asc" ? query.OrderBy(p => p.Id) : query.OrderByDescending(p => p.Id);
+                        break;
+                    case "created_date":
+                        query = sortOrder.ToLower() == "asc" ? query.OrderBy(p => p.Id) : query.OrderByDescending(p => p.Id);
                         break;
                         // Diðer sýralama seçenekleri eklenebilir.
                 }
